@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MotionTracker</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Leaflet.heat -->
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+  <!-- flatpickr -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+
+<div id="map"></div>
+
+<!-- Loading overlay -->
+<div id="loading-overlay">
+  <div class="loader-ring"></div>
+  <span>Loading tracks…</span>
+</div>
+
+<!-- Control panel -->
+<div id="control-panel">
+  <div class="panel-header">
+    <span class="panel-title">MotionTracker</span>
+    <button id="panel-toggle" class="icon-btn" title="Collapse panel">◀</button>
+  </div>
+
+  <div id="panel-body">
+    <!-- Date range -->
+    <div class="section">
+      <label class="section-label">Date Range</label>
+      <div class="quick-btns">
+        <button class="quick-btn active" data-range="today">Today</button>
+        <button class="quick-btn" data-range="7d">7 days</button>
+        <button class="quick-btn" data-range="30d">30 days</button>
+        <button class="quick-btn" data-range="custom">Custom</button>
+      </div>
+      <div id="custom-date-row" style="display:none;margin-top:8px;">
+        <input id="date-picker" type="text" class="date-input" placeholder="Pick date range…" readonly />
+      </div>
+    </div>
+
+    <!-- Devices -->
+    <div class="section">
+      <label class="section-label">Devices</label>
+      <div id="device-list" class="checkbox-group">
+        <span class="dim">Loading…</span>
+      </div>
+    </div>
+
+    <!-- Movement types -->
+    <div class="section">
+      <label class="section-label">Movement Types</label>
+      <div id="movement-filters" class="movement-chips">
+        <button class="chip active" data-type="stationary">🏠 Stationary</button>
+        <button class="chip active" data-type="walking">🚶 Walking</button>
+        <button class="chip active" data-type="running">🏃 Running</button>
+        <button class="chip active" data-type="cycling">🚴 Cycling</button>
+        <button class="chip active" data-type="driving">🚗 Driving</button>
+        <button class="chip active" data-type="unknown">❓ Unknown</button>
+      </div>
+    </div>
+
+    <!-- Layer toggles -->
+    <div class="section">
+      <label class="section-label">Layers</label>
+      <div class="toggle-row">
+        <label class="toggle-label">
+          <input type="checkbox" id="toggle-paths" checked /> Paths
+        </label>
+        <label class="toggle-label">
+          <input type="checkbox" id="toggle-heatmap" /> Heatmap
+        </label>
+        <label class="toggle-label">
+          <input type="checkbox" id="toggle-animation" checked /> Animate
+        </label>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="stats-bar">
+      <div class="stat"><span id="stat-points">—</span><small>points</small></div>
+      <div class="stat"><span id="stat-devices">—</span><small>devices</small></div>
+      <div class="stat"><span id="stat-storage">—</span><small>MB stored</small></div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>
