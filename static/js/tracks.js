@@ -1,5 +1,6 @@
 import { COLORS } from './colors.js';
 import { getMap } from './map.js';
+import { catmullRomSmooth } from './spline.js';
 
 let trackLayers = [];   // L.LayerGroup per segment pair
 let trackGroup = null;
@@ -33,23 +34,24 @@ export function renderTracks(data, visibleTypes, deviceColorMap, selectedIds) {
       const latlngs = seg.points.map(p => [p.lat, p.lon]);
       if (latlngs.length < 2) return;
       const col = COLORS[movType] || COLORS.unknown;
+      const smoothed = catmullRomSmooth(latlngs);
 
-      const opts = { lineCap: 'round', lineJoin: 'round', smoothFactor: 2 };
+      const opts = { lineCap: 'round', lineJoin: 'round', smoothFactor: 1 };
 
       // Diffuse outer glow
-      const outer = L.polyline(latlngs, { ...opts, color: deviceColor, weight: 12, opacity: tracksVisible ? 0.02 : 0 });
+      const outer = L.polyline(smoothed, { ...opts, color: deviceColor, weight: 12, opacity: tracksVisible ? 0.02 : 0 });
       outer._origOpacity = 0.02;
       // Mid halo
-      const mid   = L.polyline(latlngs, { ...opts, color: deviceColor, weight: 4,  opacity: tracksVisible ? 0.07 : 0 });
+      const mid   = L.polyline(smoothed, { ...opts, color: deviceColor, weight: 4,  opacity: tracksVisible ? 0.07 : 0 });
       mid._origOpacity = 0.07;
       // Bright core
-      const inner = L.polyline(latlngs, { ...opts, color: deviceColor, weight: 1.5, opacity: tracksVisible ? 0.28 : 0 });
+      const inner = L.polyline(smoothed, { ...opts, color: deviceColor, weight: 1.5, opacity: tracksVisible ? 0.28 : 0 });
       inner._origOpacity = 0.28;
 
       const group = L.layerGroup([outer, mid, inner]).addTo(trackGroup);
       trackLayers.push(group);
 
-      allSegments.push({ points: seg.points, movType, col, latlngs, deviceColor });
+      allSegments.push({ points: seg.points, movType, col, latlngs: smoothed, deviceColor });
     });
   });
 
