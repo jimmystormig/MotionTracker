@@ -52,8 +52,10 @@ from src.api.health import router as health_router
 from src.api.devices import router as devices_router
 from src.api.locations import router as locations_router
 from src.api.stats import router as stats_router
+from src.api.config import router as config_router
 
 app.include_router(health_router)
+app.include_router(config_router)
 app.include_router(devices_router, prefix="/api")
 app.include_router(locations_router, prefix="/api")
 app.include_router(stats_router, prefix="/api")

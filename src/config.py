@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     BACKFILL_ON_STARTUP: bool = True
     BACKFILL_DAYS: int = 7
 
+    STADIA_API_KEY: str = ""
+
     LOG_LEVEL: str = "INFO"
     TZ: str = "Europe/Stockholm"
 

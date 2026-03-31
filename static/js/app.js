@@ -32,12 +32,13 @@ function onRenderChange() {
 }
 
 // ── Init ──────────────────────────────────────────────────
-initMap();
 initControls(onDateChange, onRenderChange);
 
-loadDevices();
-loadStats();
-loadTracks();
+initMap().then(() => {
+  loadDevices();
+  loadStats();
+  loadTracks();
+});
 
 // ── Load devices from API ─────────────────────────────────
 async function loadDevices() {
