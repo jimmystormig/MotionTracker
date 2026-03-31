@@ -105,8 +105,8 @@ async def poll_once(settings: Settings, client: httpx.AsyncClient):
             if device.id in _last_positions:
                 prev_lat, prev_lon, prev_ts = _last_positions[device.id]
                 dist_m = haversine_km(prev_lat, prev_lon, lat, lon) * 1000
-                # Skip if moved less than 20 m — avoids 288 identical records/day when stationary
-                if dist_m < 20:
+                # Skip if moved less than MIN_MOVEMENT_METERS (0 = disabled)
+                if settings.MIN_MOVEMENT_METERS > 0 and dist_m < settings.MIN_MOVEMENT_METERS:
                     logger.debug("Skipping %s — stationary (%.1f m moved)", entity_id, dist_m)
                     continue
                 spd = speed_kmh(prev_lat, prev_lon, prev_ts, lat, lon, recorded_at)

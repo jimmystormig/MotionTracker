@@ -18,16 +18,17 @@ logger = logging.getLogger(__name__)
 
 _poller_task: asyncio.Task | None = None
 _backfill_task: asyncio.Task | None = None
+_backfill_loop_task: asyncio.Task | None = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global _poller_task, _backfill_task
+    global _poller_task, _backfill_task, _backfill_loop_task
 
     init_engine(settings.DATABASE_URL)
 
     from src.services.ha_poller import poll_loop
-    from src.services.backfill import backfill_history
+    from src.services.backfill import backfill_history, backfill_loop
 
     _poller_task = asyncio.create_task(poll_loop(settings))
     logger.info("HA poller started (interval=%ds, quiet=%d-%d)",
@@ -37,12 +38,19 @@ async def lifespan(app: FastAPI):
         _backfill_task = asyncio.create_task(backfill_history(settings))
         logger.info("Backfill task started (days=%d)", settings.BACKFILL_DAYS)
 
+    if settings.tracked_entities:
+        _backfill_loop_task = asyncio.create_task(backfill_loop(settings))
+        logger.info("Periodic backfill started (every=%.1fh, catchup=%.1fh)",
+                    settings.BACKFILL_INTERVAL_HOURS, settings.BACKFILL_CATCHUP_HOURS)
+
     yield
 
     if _poller_task:
         _poller_task.cancel()
     if _backfill_task:
         _backfill_task.cancel()
+    if _backfill_loop_task:
+        _backfill_loop_task.cancel()
     logger.info("MotionTracker shutdown complete")
 
 

@@ -21,6 +21,10 @@ class Settings(BaseSettings):
 
     BACKFILL_ON_STARTUP: bool = True
     BACKFILL_DAYS: int = 7
+    BACKFILL_INTERVAL_HOURS: float = 1      # How often the catch-up backfill runs
+    BACKFILL_CATCHUP_HOURS: float = 2       # How far back each catch-up looks
+
+    MIN_MOVEMENT_METERS: float = 0          # 0 = no filter; set to 20 for old behaviour
 
     STADIA_API_KEY: str = ""
 
