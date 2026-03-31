@@ -3,6 +3,7 @@ import { getMap } from './map.js';
 
 let trackLayers = [];   // L.LayerGroup per segment pair
 let trackGroup = null;
+let tracksVisible = true;
 
 export function clearTracks() {
   trackLayers.forEach(g => g.remove());
@@ -36,11 +37,14 @@ export function renderTracks(data, visibleTypes, deviceColorMap, selectedIds) {
       const opts = { lineCap: 'round', lineJoin: 'round', smoothFactor: 2 };
 
       // Diffuse outer glow
-      const outer = L.polyline(latlngs, { ...opts, color: deviceColor, weight: 12, opacity: 0.02 });
+      const outer = L.polyline(latlngs, { ...opts, color: deviceColor, weight: 12, opacity: tracksVisible ? 0.02 : 0 });
+      outer._origOpacity = 0.02;
       // Mid halo
-      const mid   = L.polyline(latlngs, { ...opts, color: deviceColor, weight: 4,  opacity: 0.07 });
+      const mid   = L.polyline(latlngs, { ...opts, color: deviceColor, weight: 4,  opacity: tracksVisible ? 0.07 : 0 });
+      mid._origOpacity = 0.07;
       // Bright core
-      const inner = L.polyline(latlngs, { ...opts, color: deviceColor, weight: 1.5, opacity: 0.28 });
+      const inner = L.polyline(latlngs, { ...opts, color: deviceColor, weight: 1.5, opacity: tracksVisible ? 0.28 : 0 });
+      inner._origOpacity = 0.28;
 
       const group = L.layerGroup([outer, mid, inner]).addTo(trackGroup);
       trackLayers.push(group);
@@ -53,11 +57,11 @@ export function renderTracks(data, visibleTypes, deviceColorMap, selectedIds) {
 }
 
 export function setTracksVisible(visible) {
-  const map = getMap();
+  tracksVisible = visible;
   if (!trackGroup) return;
-  if (visible) {
-    if (!map.hasLayer(trackGroup)) trackGroup.addTo(map);
-  } else {
-    trackGroup.remove();
-  }
+  trackGroup.eachLayer(segGroup => {
+    segGroup.eachLayer(layer => {
+      layer.setStyle({ opacity: visible ? (layer._origOpacity ?? 1) : 0 });
+    });
+  });
 }

@@ -8,11 +8,11 @@ const MAX_PARTICLES_PER_SEGMENT = 5;
 // Speed (normalised t/ms) per movement type
 const PARTICLE_SPEED = {
   stationary: 0,
-  walking:    0.00005,
-  running:    0.00010,
-  cycling:    0.00018,
-  driving:    0.00040,
-  unknown:    0.00005,
+  walking:    0.000012,
+  running:    0.000025,
+  cycling:    0.000045,
+  driving:    0.0001,
+  unknown:    0.000012,
 };
 
 // Emoji per movement type
